@@ -1,0 +1,18 @@
+{
+    "name": "kojoru/sample-chat",
+    "description": "A small sample chat program",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Konstantin Yakushev",
+            "email": "kojo@kojo.ru"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "SampleChat\\": ""
+        }
+    }
+}
