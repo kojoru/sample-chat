@@ -2,22 +2,36 @@
 
 namespace SampleChat\Core;
 
-class Application {
-    function run() {
-        $test = new \SampleChat\Database\DbConnection();
-        if ($this->getCurrentUrl() == "/") {
-            readfile(PUBLIC_DIR."/index.html");
+use SampleChat\Controllers\UserController;
+
+class Application
+{
+    function run()
+    {
+        $userController = new UserController();
+        $router = new Router();
+        $router->addRoute(new Route("/test", array($userController, "getCurrentUser")));
+
+        $request = \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
+        $response = $router->run($request);
+        if ($response != null) {
+            \Http\Response\send($response);
         } else {
-            http_response_code(404);
-            echo "404: ".htmlspecialchars($this->getCurrentUrl())." not found";
+            if ($this->getCurrentUrl() == "/") {
+                readfile(PUBLIC_DIR . "/index.html");
+            } else {
+                http_response_code(404);
+                echo "404: " . htmlspecialchars($this->getCurrentUrl()) . " not found";
+            }
         }
-        
+
+
     }
 
-    private function getCurrentUrl() {
+    private function getCurrentUrl()
+    {
         $path = urldecode(trim($_SERVER['REQUEST_URI']));
-        if (($position = strpos($path, '?')) !== FALSE)
-        {
+        if (($position = strpos($path, '?')) !== FALSE) {
             $path = substr($path, 0, $position);
         }
         return $path;

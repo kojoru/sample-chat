@@ -2,6 +2,7 @@
 
 namespace SampleChat\Database;
 
-class DbConnection {
+class DbConnection
+{
     // todo
 }
