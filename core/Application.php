@@ -2,38 +2,37 @@
 
 namespace SampleChat\Core;
 
+use JsonMapper;
+use SampleChat\Controllers\IndexController;
 use SampleChat\Controllers\UserController;
+use SampleChat\Dtos\UserRequest;
 
 class Application
 {
     function run()
     {
-        $userController = new UserController();
-        $router = new Router();
-        $router->addRoute(new Route("/test", array($userController, "getCurrentUser")));
+
 
         $request = \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
+        $router = $this->initializeRouter();
         $response = $router->run($request);
-        if ($response != null) {
-            \Http\Response\send($response);
-        } else {
-            if ($this->getCurrentUrl() == "/") {
-                readfile(PUBLIC_DIR . "/index.html");
-            } else {
-                http_response_code(404);
-                echo "404: " . htmlspecialchars($this->getCurrentUrl()) . " not found";
-            }
-        }
-
-
+        \Http\Response\send($response);
     }
 
-    private function getCurrentUrl()
+    private function initializeRouter(): Router
     {
-        $path = urldecode(trim($_SERVER['REQUEST_URI']));
-        if (($position = strpos($path, '?')) !== FALSE) {
-            $path = substr($path, 0, $position);
-        }
-        return $path;
+        $mapper = new JsonMapper();
+        $requestMapper = new RequestMapper($mapper);
+        $userController = new UserController();
+        $indexController = new IndexController();
+        $router = new Router($requestMapper);
+
+        $router->addRoute(new Route("/test", array($userController, "getCurrentUser")));
+        $router->addRoute(new Route("/user", array($userController, "authoriseUser"), "POST", new UserRequest()));
+        $router->addRoute(new Route("/", array($indexController, "index")));
+        $router->addDefaultRoute(new Route("", array($indexController, "notFound")));
+
+        return $router;
     }
+
 }

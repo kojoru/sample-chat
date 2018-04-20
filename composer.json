@@ -11,7 +11,8 @@
     "require": {
       "php": ">=7.2.0",
       "guzzlehttp/psr7": "^1.4",
-      "http-interop/response-sender": "^1.0"
+      "http-interop/response-sender": "^1.0",
+      "netresearch/jsonmapper": "v1.4.0"
     },
     "autoload": {
         "psr-4": {

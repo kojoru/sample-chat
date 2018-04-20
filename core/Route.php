@@ -33,8 +33,20 @@ class Route
             && $request->getUri()->getPath() === $this->path;
     }
 
-    function process(ServerRequestInterface $request): ResponseInterface
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestMapper $mapper
+     * @return ResponseInterface
+     * @throws \JsonMapper_Exception
+     */
+    function process(ServerRequestInterface $request, RequestMapper $mapper): ResponseInterface
     {
-        return call_user_func($this->action, $this->requestTemplate, $request->getQueryParams());
+        $dto = $mapper->requestToDto($request, $this->requestTemplate);
+        $callResult = call_user_func($this->action, $dto, $request->getQueryParams(), $request);
+        if ($callResult instanceof ResponseInterface) {
+            return $callResult;
+        } else {
+            return $mapper->dtoToResponse($callResult);
+        }
     }
 }
