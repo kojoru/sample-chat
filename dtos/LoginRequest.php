@@ -3,7 +3,7 @@
 namespace SampleChat\Dtos;
 
 
-class UserRequest
+class LoginRequest
 {
     /* @var string */
     public $name;

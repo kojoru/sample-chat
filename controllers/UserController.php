@@ -2,11 +2,10 @@
 
 namespace SampleChat\Controllers;
 
-use GuzzleHttp\Psr7\Response;
 use SampleChat\Database\DbConnection;
+use SampleChat\Dtos\LoginRequest;
 use SampleChat\Dtos\UserInList;
 use SampleChat\Dtos\UserListResponse;
-use SampleChat\Dtos\UserRequest;
 use SampleChat\Dtos\UserResponse;
 
 class UserController
@@ -19,12 +18,7 @@ class UserController
         $this->db = $db;
     }
 
-    public function getCurrentUser(): Response
-    {
-        return new Response(200, [], "Success!");
-    }
-
-    public function authoriseUser(UserRequest $request): UserResponse
+    public function authoriseUser(LoginRequest $request): UserResponse
     {
         $result = new UserResponse();
         $result->name = $request->name;
