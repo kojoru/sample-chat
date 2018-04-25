@@ -53,6 +53,18 @@ CREATE TABLE Token (
 
     }
 
+    public function getAllUsers()
+    {
+        $query = $this->connection->prepare("
+SELECT User.Id, User.Name, User.CreatedDate, MAX(Token.LastUsedDate) AS LastOnlineDate
+FROM User LEFT JOIN Token ON Token.UserId = User.Id
+GROUP BY User.Id, User.Name, User.CreatedDate
+ORDER BY LastOnlineDate DESC
+        ");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_NAMED);
+    }
+
     /**
      * Returns an existing user or creates a new one based on the name
      * @param string $userName
@@ -61,7 +73,8 @@ CREATE TABLE Token (
     private function getUserByName(string $userName)
     {
         $query = $this->connection->prepare("
-SELECT Id, Name, CreatedDate FROM User
+SELECT Id, Name, CreatedDate
+FROM User 
 WHERE Name = :UserName
         ");
         $query->bindParam("UserName", $userName);
@@ -103,4 +116,6 @@ WHERE Id = last_insert_rowid();
         $query->execute();
         return $query->fetch(PDO::FETCH_NAMED);
     }
+
+
 }

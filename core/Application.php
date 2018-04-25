@@ -33,6 +33,7 @@ class Application
 
         $router->addRoute(new Route("/test", array($userController, "getCurrentUser")));
         $router->addRoute(new Route("/user", array($userController, "authoriseUser"), "POST", new UserRequest()));
+        $router->addRoute(new Route("/users", array($userController, "getUserList")));
         $router->addRoute(new Route("/", array($indexController, "index")));
         $router->addDefaultRoute(new Route("", array($indexController, "notFound")));
 
