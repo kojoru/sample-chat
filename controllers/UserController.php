@@ -2,6 +2,7 @@
 
 namespace SampleChat\Controllers;
 
+use SampleChat\Core\Context;
 use SampleChat\Database\DbConnection;
 use SampleChat\Dtos\LoginRequest;
 use SampleChat\Dtos\UserInList;
@@ -10,11 +11,14 @@ use SampleChat\Dtos\UserResponse;
 
 class UserController
 {
-    /* @var DbConnection */
+    /** @var Context */
+    private $context;
+    /** @var DbConnection */
     private $db;
 
-    function __construct(DbConnection $db)
+    function __construct(Context $context, DbConnection $db)
     {
+        $this->context = $context;
         $this->db = $db;
     }
 
@@ -33,6 +37,9 @@ class UserController
         $result->users = array();
         $users = $this->db->getAllUsers();
         foreach ($users as $user) {
+            if ($user["Name"] == $this->context->user["Name"]) {
+                continue;
+            }
             $userInList = new UserInList();
             $userInList->name = $user["Name"];
             $userInList->lastOnline = $user["LastOnlineDate"];

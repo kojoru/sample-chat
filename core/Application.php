@@ -7,6 +7,7 @@ use SampleChat\Controllers\IndexController;
 use SampleChat\Controllers\UserController;
 use SampleChat\Database\DbConnection;
 use SampleChat\Dtos\LoginRequest;
+use SampleChat\Middlewares\CheckAuthMiddleware;
 use SampleChat\Middlewares\CheckJsonMiddleware;
 
 class Application
@@ -24,22 +25,24 @@ class Application
 
     private function initializeRouter(): Router
     {
+        $context = new Context();
         $db = new DbConnection();
 
         $mapper = new JsonMapper();
         $this->requestMapper = new RequestMapper($mapper);
-        $userController = new UserController($db);
+        $userController = new UserController($context, $db);
         $indexController = new IndexController();
         $router = new Router();
 
         $json = new CheckJsonMiddleware();
+        $auth = new CheckAuthMiddleware($context, $db);
 
         $router->addRoute($this->createRoute("/login", array($userController, "authoriseUser"))
             ->withMethod("POST")
             ->withRequestTemplate(new LoginRequest())
             ->withMiddlewares([$json]));
         $router->addRoute($this->createRoute("/user", array($userController, "getUserList"))
-            ->withMiddlewares([$json]));
+            ->withMiddlewares([$json, $auth]));
         $router->addRoute($this->createRoute("/", array($indexController, "index")));
         $router->addDefaultRoute($this->createRoute("", array($indexController, "notFound")));
 
