@@ -66,7 +66,28 @@ ORDER BY LastOnlineDate DESC
     }
 
     /**
-     * Returns an existing user or creates a new one based on the name
+     * Gets user if the token is valid, otherwise returns null
+     * @param string $secret
+     * @return mixed|null
+     */
+    public function authoriseToken(string $secret)
+    {
+        try {
+            $this->connection->beginTransaction();
+            $user = $this->getUserByToken($secret);
+            if ($user) {
+                $this->updateLastOnlineDateForToken($secret);
+            }
+            $this->connection->commit();
+            return $user;
+        } catch (\Exception $exception) {
+            $this->connection->rollBack();
+        }
+        return null;
+    }
+
+    /**
+     * Returns an existing user
      * @param string $userName
      * @return mixed
      */
@@ -77,9 +98,28 @@ SELECT Id, Name, CreatedDate
 FROM User 
 WHERE Name = :UserName
         ");
-        $query->bindParam("UserName", $userName);
-        $query->execute();
+        $query->execute(array("UserName" => $userName));
         return $query->fetch(PDO::FETCH_NAMED);
+    }
+
+    private function getUserByToken(string $secret)
+    {
+        $query = $this->connection->prepare("
+SELECT User.Id, User.Name, User.CreatedDate
+FROM User JOIN Token ON User.Id = Token.UserId
+WHERE Token.Secret = :Secret
+        ");
+        $query->execute(array("Secret" => $secret));
+        return $query->fetch(PDO::FETCH_NAMED);
+    }
+
+    private function updateLastOnlineDateForToken(string $secret): void
+    {
+        $query = $this->connection->prepare("
+UPDATE Token SET LastUsedDate = datetime('now')
+WHERE Secret = :Secret
+        ");
+        $query->execute(array("Secret" => $secret));
     }
 
     private function createUser(string $name)

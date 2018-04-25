@@ -7,9 +7,13 @@ use SampleChat\Controllers\IndexController;
 use SampleChat\Controllers\UserController;
 use SampleChat\Database\DbConnection;
 use SampleChat\Dtos\LoginRequest;
+use SampleChat\Middlewares\CheckJsonMiddleware;
 
 class Application
 {
+    /* @var RequestMapper */
+    private $requestMapper;
+
     function run()
     {
         $request = \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
@@ -23,17 +27,28 @@ class Application
         $db = new DbConnection();
 
         $mapper = new JsonMapper();
-        $requestMapper = new RequestMapper($mapper);
+        $this->requestMapper = new RequestMapper($mapper);
         $userController = new UserController($db);
         $indexController = new IndexController();
-        $router = new Router($requestMapper);
+        $router = new Router();
 
-        $router->addRoute(new Route("/login", array($userController, "authoriseUser"), "POST", new LoginRequest()));
-        $router->addRoute(new Route("/user", array($userController, "getUserList")));
-        $router->addRoute(new Route("/", array($indexController, "index")));
-        $router->addDefaultRoute(new Route("", array($indexController, "notFound")));
+        $json = new CheckJsonMiddleware();
+
+        $router->addRoute($this->createRoute("/login", array($userController, "authoriseUser"))
+            ->withMethod("POST")
+            ->withRequestTemplate(new LoginRequest())
+            ->withMiddlewares([$json]));
+        $router->addRoute($this->createRoute("/user", array($userController, "getUserList"))
+            ->withMiddlewares([$json]));
+        $router->addRoute($this->createRoute("/", array($indexController, "index")));
+        $router->addDefaultRoute($this->createRoute("", array($indexController, "notFound")));
 
         return $router;
+    }
+
+    private function createRoute(string $path, callable $action): Route
+    {
+        return new Route($this->requestMapper, $path, $action);
     }
 
 }

@@ -6,13 +6,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Router
 {
-    /* @var RequestMapper */
-    private $requestMapper;
-
-    function __construct(RequestMapper $mapper)
-    {
-        $this->requestMapper = $mapper;
-    }
 
     /* @var Route[] */
     private $routes = [];
@@ -31,8 +24,7 @@ class Router
 
     public function run(ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
     {
-        $result = $this->getRouteForRequest($request)
-            ->process($request, $this->requestMapper);
+        $result = $this->getRouteForRequest($request)->startHandling($request);
 
         return $result->withProtocolVersion($request->getProtocolVersion());
     }

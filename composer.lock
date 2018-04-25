@@ -4,7 +4,7 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "0674a27006d5278fbf827cbe3a4a7947",
+  "content-hash": "296752124b944f41a3e5ad67b54307ef",
   "packages": [
     {
       "name": "guzzlehttp/psr7",
@@ -203,6 +203,152 @@
         "response"
       ],
       "time": "2016-08-06T14:39:51+00:00"
+    },
+    {
+      "name": "psr/http-server-handler",
+      "version": "1.0.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/php-fig/http-server-handler.git",
+        "reference": "439d92054dc06097f2406ec074a2627839955a02"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/php-fig/http-server-handler/zipball/439d92054dc06097f2406ec074a2627839955a02",
+        "reference": "439d92054dc06097f2406ec074a2627839955a02",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.0",
+        "psr/http-message": "^1.0"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "1.0.x-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Psr\\Http\\Server\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "PHP-FIG",
+          "homepage": "http://www.php-fig.org/"
+        }
+      ],
+      "description": "Common interface for HTTP server-side request handler",
+      "keywords": [
+        "handler",
+        "http",
+        "http-interop",
+        "psr",
+        "psr-15",
+        "psr-7",
+        "request",
+        "response",
+        "server"
+      ],
+      "time": "2018-01-22T17:04:15+00:00"
+    },
+    {
+      "name": "psr/http-server-middleware",
+      "version": "1.0.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/php-fig/http-server-middleware.git",
+        "reference": "ea17eb1fb2c8df6db919cc578451a8013c6a0ae5"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/php-fig/http-server-middleware/zipball/ea17eb1fb2c8df6db919cc578451a8013c6a0ae5",
+        "reference": "ea17eb1fb2c8df6db919cc578451a8013c6a0ae5",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.0",
+        "psr/http-message": "^1.0",
+        "psr/http-server-handler": "^1.0"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "1.0.x-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Psr\\Http\\Server\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "PHP-FIG",
+          "homepage": "http://www.php-fig.org/"
+        }
+      ],
+      "description": "Common interface for HTTP server-side middleware",
+      "keywords": [
+        "http",
+        "http-interop",
+        "middleware",
+        "psr",
+        "psr-15",
+        "psr-7",
+        "request",
+        "response"
+      ],
+      "time": "2018-01-22T17:08:31+00:00"
+    },
+    {
+      "name": "ralouphie/getallheaders",
+      "version": "2.0.5",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/ralouphie/getallheaders.git",
+        "reference": "5601c8a83fbba7ef674a7369456d12f1e0d0eafa"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/ralouphie/getallheaders/zipball/5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
+        "reference": "5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=5.3"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "~3.7.0",
+        "satooshi/php-coveralls": ">=1.0"
+      },
+      "type": "library",
+      "autoload": {
+        "files": [
+          "src/getallheaders.php"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Ralph Khattar",
+          "email": "ralph.khattar@gmail.com"
+        }
+      ],
+      "description": "A polyfill for getallheaders.",
+      "time": "2016-02-11T07:05:27+00:00"
     }
   ],
   "packages-dev": [],

@@ -4,8 +4,10 @@ namespace SampleChat\Core;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class Route
+class Route implements RequestHandlerInterface
 {
     /* @var string */
     private $path;
@@ -19,12 +21,53 @@ class Route
     /* @var */
     private $requestTemplate;
 
-    function __construct(string $path, callable $action, string $method = "GET", object $requestTemplate = null)
+    /* @var RequestMapper */
+    private $requestMapper;
+
+    /* @var MiddlewareInterface[] */
+    private $middlewares;
+
+    function __construct(RequestMapper $requestMapper, string $path, callable $action)
     {
+        $this->requestMapper = $requestMapper;
         $this->path = $path;
         $this->action = $action;
-        $this->method = $method;
-        $this->requestTemplate = $requestTemplate;
+
+        $this->method = "GET";
+        $this->requestTemplate = null;
+    }
+
+    function withMethod(string $method)
+    {
+        if ($this->method === $method) {
+            return $this;
+        }
+
+        $new = clone $this;
+        $new->method = $method;
+        return $new;
+    }
+
+    function withRequestTemplate($requestTemplate)
+    {
+        if ($this->requestTemplate === $requestTemplate) {
+            return $this;
+        }
+
+        $new = clone $this;
+        $new->requestTemplate = $requestTemplate;
+        return $new;
+    }
+
+    function withMiddlewares(array $middlewares)
+    {
+        if ($this->middlewares === $middlewares) {
+            return $this;
+        }
+
+        $new = clone $this;
+        $new->middlewares = $middlewares;
+        return $new;
     }
 
     function isHit(ServerRequestInterface $request): bool
@@ -33,20 +76,33 @@ class Route
             && $request->getUri()->getPath() === $this->path;
     }
 
+    function startHandling(ServerRequestInterface $request): ResponseInterface
+    {
+        reset($this->middlewares);
+
+        return $this->handle($request);
+    }
+
     /**
      * @param ServerRequestInterface $request
-     * @param RequestMapper $mapper
      * @return ResponseInterface
      * @throws \JsonMapper_Exception
      */
-    function process(ServerRequestInterface $request, RequestMapper $mapper): ResponseInterface
+    function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $dto = $mapper->requestToDto($request, $this->requestTemplate);
+        if ($this->middlewares) {
+            $middleware = current($this->middlewares);
+            if ($middleware) {
+                next($this->middlewares);
+                return $middleware->process($request, $this);
+            }
+        }
+        $dto = $this->requestMapper->requestToDto($request, $this->requestTemplate);
         $callResult = call_user_func($this->action, $dto, $request->getQueryParams(), $request);
         if ($callResult instanceof ResponseInterface) {
             return $callResult;
         } else {
-            return $mapper->dtoToResponse($callResult);
+            return $this->requestMapper->dtoToResponse($callResult);
         }
     }
 }
