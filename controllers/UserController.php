@@ -8,6 +8,14 @@ use SampleChat\Dtos\UserResponse;
 
 class UserController
 {
+    /* @var \SampleChat\Database\DbConnection */
+    private $db;
+
+    function __construct($db)
+    {
+        $this->db = $db;
+    }
+
     public function getCurrentUser(): Response
     {
         return new Response(200, [], "Success!");
@@ -17,6 +25,7 @@ class UserController
     {
         $result = new UserResponse();
         $result->name = $request->name;
+        $result->token = $this->db->login($request->name);
 
         return $result;
     }

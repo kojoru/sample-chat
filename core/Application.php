@@ -5,6 +5,7 @@ namespace SampleChat\Core;
 use JsonMapper;
 use SampleChat\Controllers\IndexController;
 use SampleChat\Controllers\UserController;
+use SampleChat\Database\DbConnection;
 use SampleChat\Dtos\UserRequest;
 
 class Application
@@ -21,9 +22,12 @@ class Application
 
     private function initializeRouter(): Router
     {
+
+        $db = new DbConnection();
+
         $mapper = new JsonMapper();
         $requestMapper = new RequestMapper($mapper);
-        $userController = new UserController();
+        $userController = new UserController($db);
         $indexController = new IndexController();
         $router = new Router($requestMapper);
 
