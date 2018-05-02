@@ -141,6 +141,10 @@ a {
     flex: 1;
 }
 
+.message-list__message {
+    font-weight: 800;
+}
+
 .loading-overlay {
     position: absolute;
     width: 100%;

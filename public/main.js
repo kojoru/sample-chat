@@ -2,6 +2,8 @@
 
     let loadingNumber = 0;
     let elements = {};
+    let users = [];
+    let currentUserId;
 
     const hide = (element) => {
         element.classList.add('hidden');
@@ -35,11 +37,26 @@
             .then(response => response.json());
     };
 
-    const fetchUsers = (loginData) => {
+    const fetchUsers = () => {
         return fetch('/user', {
             headers: new Headers({
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${loginData.token}`
+                'Authorization': `Bearer ${getToken()}`
+            })
+        })
+            .then(response => response.json());
+    };
+
+    const fetchNewMessage = (toUserId, value) => {
+        return fetch('/message', {
+            method: 'POST',
+            body: JSON.stringify({
+                toUserId: toUserId,
+                value: value
+            }),
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`
             })
         })
             .then(response => response.json());
@@ -66,6 +83,10 @@
         }
     };
 
+    const getToken = () => {
+        return getSavedLogin().token;
+    };
+
     const login = (userName) => {
         startLoading();
         fetchLogin(userName)
@@ -76,19 +97,29 @@
             });
     };
 
+    const selectInterlocutor = (id) => {
+        currentUserId = id;
+        elements.chatMessage.textContent = `You are now talking to ${users[id].name} (write-only)`;
+    };
+
     const attachEvents = () => {
-        document.querySelector('.js-login-form').addEventListener('submit', event => {
+        elements.loginForm.addEventListener('submit', event => {
             console.log('submit');
             event.preventDefault();
 
             login(event.target.elements['login'].value);
         });
 
-        document.querySelector('.js-logout').addEventListener('click', event => {
+        elements.logoutButton.addEventListener('click', event => {
             event.preventDefault();
             removeLogin();
             hide(elements.chatPage);
             show(elements.landingPage);
+        });
+
+        elements.chatForm.addEventListener('submit', event => {
+            event.preventDefault();
+            fetchNewMessage(currentUserId, event.target.elements['chat-message'].value);
         })
     };
 
@@ -97,15 +128,22 @@
         if (loginData) {
             startLoading();
             elements.username.textContent = `You are ${loginData.name}`;
-            return fetchUsers(loginData).then((usersData) => {
+            return fetchUsers().then((usersData) => {
                 elements.userList.innerHTML = '';
+                users = [];
                 usersData.users.forEach(user => {
+                    users[user.id] = user;
                     const newNode = elements.userTemplate.cloneNode(true);
                     newNode.textContent = user.name;
+                    newNode.dataset["id"] = user.id;
+                    newNode.addEventListener('click', event => {
+                        let id = event.target.dataset["id"];
+                        selectInterlocutor(id);
+                    });
                     elements.userList.appendChild(newNode);
 
                 });
-                console.log(usersData);
+                selectInterlocutor(usersData.users[0].id);
                 show(elements.chatPage);
                 hide(elements.landingPage);
                 stopLoading();
@@ -123,7 +161,12 @@
             landingPage: document.querySelector('.js-landing'),
             username: document.querySelector('.js-username'),
             userTemplate: document.querySelector('.js-user'),
-            userList: document.querySelector('.js-user-list')
+            userList: document.querySelector('.js-user-list'),
+            logoutButton: document.querySelector('.js-logout'),
+            loginForm: document.querySelector('.js-login-form'),
+            chatForm: document.querySelector('.js-chat-form'),
+            chatMessage: document.querySelector('.js-message')
+
         };
         attachEvents();
         initChat();
