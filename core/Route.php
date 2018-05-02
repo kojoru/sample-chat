@@ -35,6 +35,7 @@ class Route implements RequestHandlerInterface
 
         $this->method = "GET";
         $this->requestTemplate = null;
+        $this->middlewares = [];
     }
 
     function withMethod(string $method)
