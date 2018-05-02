@@ -41,6 +41,7 @@ class UserController
                 continue;
             }
             $userInList = new UserInList();
+            $userInList->id = $user["Id"];
             $userInList->name = $user["Name"];
             $userInList->lastOnline = $user["LastOnlineDate"];
             array_push($result->users, $userInList);

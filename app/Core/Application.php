@@ -3,10 +3,12 @@
 namespace SampleChat\Core;
 
 use JsonMapper;
+use SampleChat\Controllers\ChatController;
 use SampleChat\Controllers\IndexController;
 use SampleChat\Controllers\UserController;
 use SampleChat\Database\DbConnection;
 use SampleChat\Dtos\LoginRequest;
+use SampleChat\Dtos\NewMessageRequest;
 use SampleChat\Middlewares\CheckAuthMiddleware;
 use SampleChat\Middlewares\CheckJsonMiddleware;
 
@@ -31,6 +33,7 @@ class Application
         $mapper = new JsonMapper();
         $this->requestMapper = new RequestMapper($mapper);
         $userController = new UserController($context, $db);
+        $chatController = new ChatController($context, $db);
         $indexController = new IndexController();
         $router = new Router();
 
@@ -42,6 +45,10 @@ class Application
             ->withRequestTemplate(new LoginRequest())
             ->withMiddlewares([$json]));
         $router->addRoute($this->createRoute("/user", array($userController, "getUserList"))
+            ->withMiddlewares([$json, $auth]));
+        $router->addRoute($this->createRoute("/message", array($chatController, "addMessage"))
+            ->withMethod("POST")
+            ->withRequestTemplate(new NewMessageRequest())
             ->withMiddlewares([$json, $auth]));
         $router->addRoute($this->createRoute("/", array($indexController, "index")));
         $router->addDefaultRoute($this->createRoute("", array($indexController, "notFound")));

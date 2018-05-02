@@ -38,8 +38,18 @@ CREATE TABLE Token (
     Secret        TEXT, 
     CreatedDate   TEXT, 
     LastUsedDate  TEXT, 
-    FOREIGN KEY (UserId) REFERENCES Users(Id)
+    FOREIGN KEY (UserId) REFERENCES User(Id)
 );
+
+CREATE TABLE Message (
+    Id            INTEGER PRIMARY KEY,
+    FromUserId    INTEGER,
+    ToUserId      INTEGER,
+    Value         TEXT,
+    SentDate      TEXT,
+    FOREIGN KEY (FromUserId) REFERENCES User(Id),
+    FOREIGN KEY (ToUserId) REFERENCES User(Id)
+)
        ");
     }
 
@@ -84,6 +94,22 @@ ORDER BY LastOnlineDate DESC
             $this->connection->rollBack();
         }
         return null;
+    }
+
+    public function addMessage(int $fromUserId, int $toUserId, string $value)
+    {
+        $query = $this->connection->prepare("
+INSERT INTO Message (FromUserId, ToUserId, Value, SentDate) 
+VALUES (:FromUserId, :ToUserId, :Value, datetime('now'));
+        ");
+        $query->execute(array("FromUserId" => $fromUserId, "ToUserId" => $toUserId, "Value" => $value));
+
+        $query = $this->connection->prepare("
+SELECT Id, FromUserId, ToUserId, Value, SentDate FROM Message 
+WHERE Id = last_insert_rowid();
+        ");
+        $query->execute();
+        return $query->fetch(PDO::FETCH_NAMED);
     }
 
     /**
