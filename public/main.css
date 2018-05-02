@@ -1,1 +1,205 @@
-/* css goes here */
+html, body {
+    background-color: #fff;
+    color: #636b6f;
+    height: 100vh;
+    margin: 0;
+    font-family: "Helvetica Neue", "Segoe UI", sans-serif;
+    box-sizing: border-box;
+}
+
+a {
+    color: inherit;
+}
+
+.landing {
+    height: 100vh;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    background: black;
+    color: whitesmoke;
+}
+
+.chat {
+    min-height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.chat__sidebar {
+    flex: 0 0 12em;
+    order: -1;
+    display: flex;
+    flex-direction: column;
+    background: darkseagreen;
+    color: whitesmoke;
+}
+
+.chat__main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 100vh;
+    /*justify-content: space-between;*/
+}
+
+.landing__header {
+    font-family: MontserratAlternates, sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+    line-height: 60px;
+}
+
+.inline-form {
+    display: block;
+}
+
+.inline-form_login {
+    margin-bottom: 30vh;
+    margin-top: 30vh;
+}
+
+.inline-form__label {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -.6px;
+    line-height: 48px;
+    font-family: Montserrat, sans-serif;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    font-variant: small-caps;
+}
+
+.inline-form__input {
+    display: flex;
+    margin-top: 5px;
+}
+
+.inline-form__field {
+    flex: 1;
+    color: inherit;
+    border-radius: 8px;
+    outline: inherit;
+    box-shadow: none;
+    border: 1px solid gray;
+}
+
+.inline-form__field_login {
+    width: 250px;
+    background: none;
+    border: none;
+    font-size: 56px;
+    font-family: BebasNeue, sans-serif;
+}
+
+.inline-form__button {
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    outline: inherit;
+    font-family: Montserrat, sans-serif;
+    font-weight: 800;
+    color: inherit;
+}
+
+.inline-form__button_login {
+    padding: 15px 10px;
+    font-size: 20px;
+    background: #ffb142;
+}
+
+.current-user {
+    padding: 10px 15px;
+    border-bottom: 1px solid whitesmoke;
+    font-family: Montserrat, sans-serif;
+    font-weight: 800;
+}
+
+.current-user__logout {
+    font-weight: 500;
+}
+
+.user-list {
+    flex-grow: 1;
+}
+
+.user-list__user {
+    padding: 20px 15px;
+    cursor: pointer;
+}
+
+.user-list__user:hover {
+    background: rgba(255, 255, 255, .3);
+}
+
+.message-list {
+    padding: 10px 15px;
+    flex: 1;
+}
+
+.loading-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: antiquewhite;
+    opacity: .4;
+    left: 0;
+    top: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+@font-face {
+    font-family: BebasNeue;
+    src: url(/fonts/BebasNeue-Bold.otf) format("opentype");
+    font-style: normal;
+    font-weight: 800
+}
+
+@font-face {
+    font-family: Montserrat;
+    src: url(/fonts/Montserrat-Bold.ttf) format("truetype");
+    font-style: normal;
+    font-weight: 800
+}
+
+@font-face {
+    font-family: Montserrat;
+    src: url(/fonts/Montserrat-Regular.otf) format("opentype");
+    font-style: normal;
+    font-weight: 500
+}
+
+@font-face {
+    font-family: MontserratAlternates;
+    src: url(/fonts/MontserratAlternates-Bold.ttf) format("truetype");
+    font-style: normal;
+    font-weight: 800
+}
+
+@font-face {
+    font-family: MontserratAlternates;
+    src: url(/fonts/MontserratAlternates-SemiBold.ttf) format("truetype");
+    font-style: normal;
+    font-weight: 600
+}
+
+@font-face {
+    font-family: MontserratAlternates;
+    src: url(/fonts/MontserratAlternates-Medium.ttf) format("truetype");
+    font-style: normal;
+    font-weight: 500
+}
+
+@font-face {
+    font-family: BebasNeue;
+    src: url(/fonts/BebasNeue-Regular.otf) format("opentype");
+    font-style: normal;
+    font-weight: 400
+}

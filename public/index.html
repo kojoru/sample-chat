@@ -3,12 +3,53 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Hello World</title>
+    <title>Simple Chat</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:800" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src="main.js"></script>
 </head>
 <body>
-    Hello, World!
+<div class="landing js-landing hidden">
+    <div>
+        <h4 class="landing__header">a chat like any others</h4>
+        <form class="inline-form inline-form_login js-login-form">
+            <label class="inline-form__label" for="login">Type your name and see</label>
+            <div class="inline-form__input">
+                <input class="inline-form__field inline-form__field_login" name="login" id="login"
+                       placeholder="Your name or nickname">
+                <button class="inline-form__button inline-form__button_login" type="submit">access it</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="chat js-chat hidden">
+    <section class="chat__main">
+        <div class="message-list">
+            <div class="message-list__message">
+                <b>Select a chat to talk to the person</b>
+            </div>
+        </div>
+        <form class="inline-form">
+            <div class="inline-form__input">
+                <input title="Chat message" class="inline-form__field" name="chat-message" id="chat-message">
+                <button class="inline-form__button" type="submit">↵</button>
+            </div>
+        </form>
+    </section>
+    <section class="chat__sidebar">
+        <div class="current-user">
+            <div class="current-user__username js-username">You are kojo</div>
+            <div class="current-user__logout js-logout"><a href="#">Log out</a></div>
+
+        </div>
+        <div class="user-list js-user-list">
+            <div class="user-list__user js-user">someone</div>
+        </div>
+    </section>
+</div>
+<div class="loading-overlay js-loading-overlay hidden">
+
+</div>
 </body>
 </html>
