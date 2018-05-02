@@ -132,7 +132,7 @@ VALUES (:UserName, date('now'))
 
 
         $query = $this->connection->prepare("
-SELECT Id, UserId, Secret, CreatedDate, LastUsedDate FROM Token 
+SELECT Id, Name, CreatedDate FROM User 
 WHERE Id = last_insert_rowid();
         ");
         $query->execute();
