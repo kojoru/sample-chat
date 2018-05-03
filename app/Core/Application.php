@@ -8,6 +8,7 @@ use SampleChat\Controllers\IndexController;
 use SampleChat\Controllers\UserController;
 use SampleChat\Database\DbConnection;
 use SampleChat\Dtos\LoginRequest;
+use SampleChat\Dtos\MessageListRequest;
 use SampleChat\Dtos\NewMessageRequest;
 use SampleChat\Middlewares\CheckAuthMiddleware;
 use SampleChat\Middlewares\CheckJsonMiddleware;
@@ -50,6 +51,10 @@ class Application
             ->withMethod("POST")
             ->withRequestTemplate(new NewMessageRequest())
             ->withMiddlewares([$json, $auth]));
+        $router->addRoute($this->createRoute("/message", array($chatController, "getMessageList"))
+            ->withMethod("GET")
+            ->withRequestTemplate(new MessageListRequest())
+            ->withMiddlewares([$auth]));
         $router->addRoute($this->createRoute("/", array($indexController, "index")));
         $router->addDefaultRoute($this->createRoute("", array($indexController, "notFound")));
 

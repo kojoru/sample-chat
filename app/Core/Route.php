@@ -99,7 +99,7 @@ class Route implements RequestHandlerInterface
             }
         }
         $dto = $this->requestMapper->requestToDto($request, $this->requestTemplate);
-        $callResult = call_user_func($this->action, $dto, $request->getQueryParams(), $request);
+        $callResult = call_user_func($this->action, $dto, $request);
         if ($callResult instanceof ResponseInterface) {
             return $callResult;
         } else {

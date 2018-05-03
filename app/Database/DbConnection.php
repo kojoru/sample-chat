@@ -112,6 +112,30 @@ WHERE Id = last_insert_rowid();
         return $query->fetch(PDO::FETCH_NAMED);
     }
 
+    public function getMessages(int $count, int $currentUserId = null, int $otherUserId = null, string $startDate = null, string $endDate = null)
+    {
+        $query = $this->connection->prepare($this->build_query([
+            ['SELECT Id, FromUserId, ToUserId, Value, SentDate'],
+            ['FROM Message'],
+            [$currentUserId, 'WHERE', '(FromUserId = :CurrentUserId OR ToUserId = :CurrentUserId)'],
+            [$otherUserId, 'AND', '(FromUserId = :OtherUserId OR ToUserId = :OtherUserId)'],
+            [$startDate, 'AND', 'SentDate > :StartDate'],
+            [$endDate, 'AND', 'SentDate < :EndDate'],
+            ['ORDER BY SentDate DESC'],
+            [$count, 'LIMIT :Count']
+        ]));
+
+        $count && $query->bindParam('Count', $count);
+        $currentUserId && $query->bindParam('CurrentUserId', $currentUserId);
+        $otherUserId && $query->bindParam('OtherUserId', $otherUserId);
+        $startDate && $query->bindParam('StartDate', $startDate);
+        $endDate && $query->bindParam('EndDate', $endDate);
+
+        $query->execute();
+
+        return $query->fetchAll(PDO::FETCH_NAMED);
+    }
+
     /**
      * Returns an existing user
      * @param string $userName
@@ -183,5 +207,31 @@ WHERE Id = last_insert_rowid();
         return $query->fetch(PDO::FETCH_NAMED);
     }
 
+    // http://www.gabordemooij.com/index.php?p=/tiniest_query_builder
+    private function build_query($pieces)
+    {
+        $sql = '';
+        $glue = NULL;
+        foreach ($pieces as $piece) {
+            $n = count($piece);
+            switch ($n) {
+                case 1:
+                    $sql .= " {$piece[0]} ";
+                    break;
+                case 2:
+                    $glue = NULL;
+                    if (!is_null($piece[0])) $sql .= " {$piece[1]} ";
+                    break;
+                case 3:
+                    $glue = (is_null($glue)) ? $piece[1] : $glue;
+                    if (!is_null($piece[0])) {
+                        $sql .= " {$glue} {$piece[2]} ";
+                        $glue = NULL;
+                    }
+                    break;
+            }
+        }
+        return $sql;
+    }
 
 }
