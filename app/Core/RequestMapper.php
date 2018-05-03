@@ -9,6 +9,7 @@ use JsonMapper;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SampleChat\Dtos\AbstractRequest;
 
 class RequestMapper
 {
@@ -23,10 +24,10 @@ class RequestMapper
     /**
      * @param RequestInterface $request
      * @param $template
-     * @return object
+     * @return AbstractRequest
      * @throws \JsonMapper_Exception
      */
-    public function requestToDto(ServerRequestInterface $request, $template)
+    public function requestToDto(ServerRequestInterface $request, AbstractRequest $template = null): ?AbstractRequest
     {
         if ($template === null) {
             return null;
@@ -46,9 +47,9 @@ class RequestMapper
         return $template;
     }
 
-    public function dtoToResponse($dto): ResponseInterface
+    public function dtoToResponse($dto, $httpCode = 200): ResponseInterface
     {
-        $response = new Response();
+        $response = new Response($httpCode);
         $stream = new BufferStream();
         $stream->write(json_encode($dto));
 

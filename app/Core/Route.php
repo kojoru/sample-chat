@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use SampleChat\Dtos\AbstractRequest;
 
 class Route implements RequestHandlerInterface
 {
@@ -18,7 +19,7 @@ class Route implements RequestHandlerInterface
     /* @var string */
     private $method;
 
-    /* @var */
+    /* @var AbstractRequest */
     private $requestTemplate;
 
     /* @var RequestMapper */
@@ -49,7 +50,7 @@ class Route implements RequestHandlerInterface
         return $new;
     }
 
-    function withRequestTemplate($requestTemplate)
+    function withRequestTemplate(AbstractRequest $requestTemplate)
     {
         if ($this->requestTemplate === $requestTemplate) {
             return $this;
@@ -99,6 +100,14 @@ class Route implements RequestHandlerInterface
             }
         }
         $dto = $this->requestMapper->requestToDto($request, $this->requestTemplate);
+        if ($dto) {
+            $dto->validate();
+
+            if (!$dto->isValid()) {
+                $response = ['errors' => $dto->getValidationProblems()];
+                return $this->requestMapper->dtoToResponse($response, 400);
+            }
+        }
         $callResult = call_user_func($this->action, $dto, $request);
         if ($callResult instanceof ResponseInterface) {
             return $callResult;

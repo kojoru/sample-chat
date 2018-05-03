@@ -136,6 +136,17 @@ WHERE Id = last_insert_rowid();
         return $query->fetchAll(PDO::FETCH_NAMED);
     }
 
+
+    public function getUserById(int $id)
+    {
+        $query = $this->connection->prepare("
+SELECT Id, Name, CreatedDate FROM User 
+WHERE Id = :Id
+        ");
+        $query->execute(array('Id' => $id));
+        return $query->fetch(PDO::FETCH_NAMED);
+    }
+
     /**
      * Returns an existing user
      * @param string $userName
@@ -179,7 +190,6 @@ INSERT INTO User (Name, CreatedDate)
 VALUES (:UserName, date('now'))
         ");
         $query->execute(array("UserName" => $name));
-
 
         $query = $this->connection->prepare("
 SELECT Id, Name, CreatedDate FROM User 

@@ -25,8 +25,12 @@ class ChatController
 
     public function addMessage(NewMessageRequest $request): NewMessageResponse
     {
+        $toUser = $this->db->getUserById($request->toUserId);
+        if (!$toUser) {
+            throw new \InvalidArgumentException('User with id mentioned in toUserId does not exist');
+        }
 
-        $newMessage = $this->db->addMessage($this->context->user["Id"], $request->toUserId, $request->value);
+        $newMessage = $this->db->addMessage($this->context->user['Id'], $request->toUserId, $request->value);
 
         $result = new NewMessageResponse();
         $result->message = $this->dbMessageToMessageInfo($newMessage);
@@ -42,7 +46,7 @@ class ChatController
 
         $messages = $this->db->getMessages(
             $count + 1,
-            $this->context->user["Id"],
+            $this->context->user['Id'],
             $request->userId,
             $request->afterDate,
             $request->beforeDate
@@ -67,11 +71,11 @@ class ChatController
     private function dbMessageToMessageInfo($dbMessage): MessageInfo
     {
         $result = new MessageInfo();
-        $result->id = $dbMessage["Id"];
-        $result->value = $dbMessage["Value"];
-        $result->fromUserId = $dbMessage["FromUserId"];
-        $result->toUserId = $dbMessage["ToUserId"];
-        $result->date = $dbMessage["SentDate"];
+        $result->id = $dbMessage['Id'];
+        $result->value = $dbMessage['Value'];
+        $result->fromUserId = $dbMessage['FromUserId'];
+        $result->toUserId = $dbMessage['ToUserId'];
+        $result->date = $dbMessage['SentDate'];
         return $result;
     }
 }

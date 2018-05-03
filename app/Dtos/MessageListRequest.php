@@ -3,7 +3,7 @@
 namespace SampleChat\Dtos;
 
 
-class MessageListRequest
+class MessageListRequest extends AbstractRequest
 {
     /** @var int */
     public $count;
@@ -16,4 +16,11 @@ class MessageListRequest
 
     /** @var int */
     public $userId;
+
+    public function validate(): void
+    {
+        $this->checkIsDate('before_date', $this->beforeDate);
+        $this->checkIsDate('after_date', $this->afterDate);
+        $this->checkIsInt('user_id', $this->userId);
+    }
 }
