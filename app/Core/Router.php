@@ -26,7 +26,12 @@ class Router
     {
         $result = $this->getRouteForRequest($request)->startHandling($request);
 
-        return $result->withProtocolVersion($request->getProtocolVersion());
+        return $result
+            ->withProtocolVersion($request->getProtocolVersion())
+            ->withAddedHeader('Content-Security-Policy', 'default-src \'self\'; object-src \'none\'')
+            ->withAddedHeader('X-Content-Type-Options', 'nosniff')
+            ->withAddedHeader('X-Frame-Options', 'DENY')
+            ->withAddedHeader('X-XSS-Protection', '1; mode=block');
     }
 
     private function getRouteForRequest(ServerRequestInterface $request)
