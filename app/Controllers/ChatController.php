@@ -25,6 +25,10 @@ class ChatController
 
     public function addMessage(NewMessageRequest $request): NewMessageResponse
     {
+        if ($request->toUserId == $this->context->user['Id']) {
+            throw new \InvalidArgumentException('Can\'t send messages to yourself');
+        }
+
         $toUser = $this->db->getUserById($request->toUserId);
         if (!$toUser) {
             throw new \InvalidArgumentException('User with id mentioned in toUserId does not exist');
@@ -55,10 +59,10 @@ class ChatController
 
         $result = new MessageListResponse();
         $result->messages = [];
-        $result->has_more = false;
+        $result->hasMore = false;
         if (count($messages) > $count) {
-            $result->has_more = true;
-            $messages = array_slice($messages, $count);
+            $result->hasMore = true;
+            $messages = array_slice($messages, 0, $count);
         }
 
         foreach ($messages as $message) {

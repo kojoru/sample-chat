@@ -11,5 +11,7 @@ class UserInList
     public $name;
     /* @var string */
     public $lastOnline;
+    /* @var bool */
+    public $isCurrentUser;
 
 }

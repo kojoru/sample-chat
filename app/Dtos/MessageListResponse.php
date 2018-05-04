@@ -9,6 +9,6 @@ class MessageListResponse
     public $messages;
 
     /** @var bool */
-    public $has_more;
+    public $hasMore;
 
 }

@@ -92,15 +92,15 @@ ORDER BY LastOnlineDate DESC
             return $user;
         } catch (\Exception $exception) {
             $this->connection->rollBack();
+            return $this->getUserByToken($secret);
         }
-        return null;
     }
 
     public function addMessage(int $fromUserId, int $toUserId, string $value)
     {
         $query = $this->connection->prepare("
 INSERT INTO Message (FromUserId, ToUserId, Value, SentDate) 
-VALUES (:FromUserId, :ToUserId, :Value, datetime('now'));
+VALUES (:FromUserId, :ToUserId, :Value, strftime('%Y-%m-%d %H:%M:%f', 'now'));
         ");
         $query->execute(array("FromUserId" => $fromUserId, "ToUserId" => $toUserId, "Value" => $value));
 
@@ -177,7 +177,7 @@ WHERE Token.Secret = :Secret
     private function updateLastOnlineDateForToken(string $secret): void
     {
         $query = $this->connection->prepare("
-UPDATE Token SET LastUsedDate = datetime('now')
+UPDATE Token SET LastUsedDate = strftime('%Y-%m-%d %H:%M:%f', 'now')
 WHERE Secret = :Secret
         ");
         $query->execute(array("Secret" => $secret));
@@ -205,7 +205,7 @@ WHERE Id = last_insert_rowid();
 
         $query = $this->connection->prepare("
 INSERT INTO Token (UserId, Secret, CreatedDate, LastUsedDate) 
-VALUES (:UserId, :Secret, datetime('now'), datetime('now'));
+VALUES (:UserId, :Secret, strftime('%Y-%m-%d %H:%M:%f', 'now'), strftime('%Y-%m-%d %H:%M:%f', 'now'));
         ");
         $query->execute(array("UserId" => $userId, "Secret" => $secret));
 

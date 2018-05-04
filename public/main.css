@@ -22,7 +22,7 @@ a {
 }
 
 .chat {
-    min-height: 100vh;
+    height: 100vh;
     margin: 0 auto;
     display: flex;
     flex-direction: row;
@@ -136,12 +136,17 @@ a {
     background: rgba(255, 255, 255, .3);
 }
 
+.user-list__user_selected {
+    background: rgba(128, 255, 128, .2);
+}
+
 .message-list {
     padding: 10px 15px;
     flex: 1;
+    overflow: auto;
 }
 
-.message-list__message {
+.message-list__author {
     font-weight: 800;
 }
 

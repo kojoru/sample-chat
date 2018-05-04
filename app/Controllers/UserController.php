@@ -37,13 +37,13 @@ class UserController
         $result->users = array();
         $users = $this->db->getAllUsers();
         foreach ($users as $user) {
-            if ($user["Name"] == $this->context->user["Name"]) {
-                continue;
-            }
             $userInList = new UserInList();
             $userInList->id = $user["Id"];
             $userInList->name = $user["Name"];
             $userInList->lastOnline = $user["LastOnlineDate"];
+            if ($user["Name"] == $this->context->user["Name"]) {
+                $userInList->isCurrentUser = true;
+            }
             array_push($result->users, $userInList);
         }
 
