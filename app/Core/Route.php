@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SampleChat\Dtos\AbstractRequest;
+use SampleChat\Exceptions\AccessDeniedException;
 
 class Route implements RequestHandlerInterface
 {
@@ -78,11 +79,27 @@ class Route implements RequestHandlerInterface
             && $request->getUri()->getPath() === $this->path;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws \JsonMapper_Exception
+     */
     function startHandling(ServerRequestInterface $request): ResponseInterface
     {
         reset($this->middlewares);
 
-        return $this->handle($request);
+        try {
+            return $this->handle($request);
+        } catch (AccessDeniedException $e) {
+            $response = ['errors' => ['Access denied: ' . $e->getMessage()]];
+            return $this->requestMapper->dtoToResponse($response, 403);
+        } catch (\InvalidArgumentException $e) {
+            $response = ['errors' => [$e->getMessage()]];
+            return $this->requestMapper->dtoToResponse($response, 400);
+        } catch (\JsonMapper_Exception $e) {
+            $response = ['errors' => ['Error when parsing JSON: ' . $e->getMessage()]];
+            return $this->requestMapper->dtoToResponse($response, 400);
+        }
     }
 
     /**
@@ -109,6 +126,7 @@ class Route implements RequestHandlerInterface
             }
         }
         $callResult = call_user_func($this->action, $dto, $request);
+
         if ($callResult instanceof ResponseInterface) {
             return $callResult;
         } else {

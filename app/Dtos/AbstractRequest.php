@@ -5,19 +5,20 @@ namespace SampleChat\Dtos;
 
 abstract class AbstractRequest
 {
-    private $date_regex = '^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$';
-    protected $validation_problems = [];
+    // taken from https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+    private $dateRegex = '/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/';
+    protected $validationProblems = [];
 
     public abstract function validate(): void;
 
     public function isValid(): bool
     {
-        return count($this->validation_problems) == 0;
+        return count($this->validationProblems) == 0;
     }
 
     public function getValidationProblems(): array
     {
-        return $this->validation_problems;
+        return $this->validationProblems;
     }
 
     protected function checkLength($fieldName, $value, $min = null, $max = null): void
@@ -45,8 +46,8 @@ abstract class AbstractRequest
         if (is_null($value)) {
             return;
         }
-        if (!preg_match($this->date_regex, $value)) {
-            $this->addValidationProblem('Date parameter ' . $fieldName . 'is not set to a date.');
+        if (!preg_match($this->dateRegex, $value)) {
+            $this->addValidationProblem('Date parameter ' . $fieldName . ' is not set to a date.');
         }
     }
 
@@ -55,13 +56,13 @@ abstract class AbstractRequest
         if (is_null($value)) {
             return;
         }
-        if (!is_int($value)) {
-            $this->addValidationProblem('Integer parameter ' . $fieldName . 'is not set to an integer.');
+        if (!ctype_digit((string)$value)) {
+            $this->addValidationProblem('Integer parameter ' . $fieldName . ' is not set to an integer.');
         }
     }
 
     private function addValidationProblem(string $problem): void
     {
-        array_push($this->validation_problems, $problem);
+        array_push($this->validationProblems, $problem);
     }
 }

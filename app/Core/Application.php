@@ -2,6 +2,7 @@
 
 namespace SampleChat\Core;
 
+use GuzzleHttp\Psr7\Response;
 use JsonMapper;
 use SampleChat\Controllers\ChatController;
 use SampleChat\Controllers\IndexController;
@@ -20,10 +21,15 @@ class Application
 
     function run()
     {
-        $request = \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
-        $router = $this->initializeRouter();
-        $response = $router->run($request);
-        \Http\Response\send($response);
+        try {
+            $request = \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
+            $router = $this->initializeRouter();
+            $response = $router->run($request);
+            \Http\Response\send($response);
+        } catch (\Throwable $e) {
+            \Http\Response\send(new Response(500, [], '500: server error. Try again later or contact the developer.'));
+            throw $e;
+        }
     }
 
     private function initializeRouter(): Router
